@@ -3358,10 +3358,22 @@ static void goodix_set_gesture_work(struct work_struct *work)
 		ts_debug("touch is not suspended, skip re-wake");
 		return;
 	}
+
+	ts_debug("double is 0x%x", core_data->double_wakeup);
+	ts_debug("aod is 0x%x", core_data->aod_status);
+	ts_debug("fod is 0x%x", core_data->fod_status);
+	ts_debug("enable is 0x%x", core_data->gesture_enabled);
+	if ((core_data->double_wakeup) || (core_data->aod_status) ||
+				(core_data->fod_status != -1 && core_data->fod_status != 100))
+		core_data->gesture_enabled |= (1 << 0);
+	else
+		core_data->gesture_enabled &= ~(1 << 0);
+	ts_info("set gesture_enabled:%d", core_data->gesture_enabled);
+
 	pm_stay_awake(core_data->bus->dev);
 	if (core_data->nonui_status) {
 		hw_ops->irq_enable(core_data, false);
-		// hw_ops->gesture(core_data, 0);
+		hw_ops->gesture(core_data, 0);
 		goto exit;
 	}
 	res = hw_ops->reset(core_data, GOODIX_NORMAL_RESET_DELAY_MS);
@@ -3369,7 +3381,7 @@ static void goodix_set_gesture_work(struct work_struct *work)
 		ts_err("reset failed during gesture works");
 		goto exit;
 	}
-	res = hw_ops->gesture(core_data, 1);
+	res = hw_ops->gesture(core_data, core_data->gesture_enabled);
 	if (res) {
 		ts_err("failed enter gesture mode");
 		goto exit;

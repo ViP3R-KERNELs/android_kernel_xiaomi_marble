@@ -249,7 +249,7 @@ int brl_resume(struct goodix_ts_core *cd)
 }
 
 #define GOODIX_GESTURE_CMD	0xA6
-int brl_gesture(struct goodix_ts_core *cd, int gesture_type)
+int brl_gesture(struct goodix_ts_core *cd, int enable)
 {
 	struct goodix_ts_cmd cmd;
 	int ret = 0;
@@ -258,6 +258,9 @@ int brl_gesture(struct goodix_ts_core *cd, int gesture_type)
 	cmd.len = 6;
 	cmd.data[0] = 0x80;
 	cmd.data[1] = 0x10;
+
+	if (!enable)
+		goto send_cmd;
 
 	if ((cd->fod_icon_status) || (cd->aod_status)) {
 		cmd.data[0] = 0x80;
@@ -271,6 +274,8 @@ int brl_gesture(struct goodix_ts_core *cd, int gesture_type)
 		cmd.data[0] = 0x00;
 		cmd.data[1] = 0x00;
 	}
+
+send_cmd:
 	ts_info("BRL cmd 0 is 0x%x", cmd.data[0]);
 	ts_info("BRL cmd 1 is 0x%x", cmd.data[1]);
 
