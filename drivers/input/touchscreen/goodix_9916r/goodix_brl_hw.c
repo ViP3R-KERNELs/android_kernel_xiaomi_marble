@@ -1282,6 +1282,7 @@ static int brl_event_handler(struct goodix_ts_core *cd,
 		ts_event->gesture_type = pre_buf[4];
 	}
 
+#ifdef GOODIX_XIAOMI_TOUCHFEATURE
 	if (cd->palm_status) {
 		if (large_touch_status & GOODIX_LARGETOUCH_EVENT) {
 			update_palm_sensor_value(1);
@@ -1289,7 +1290,7 @@ static int brl_event_handler(struct goodix_ts_core *cd,
 		}
 		update_palm_sensor_value(0);
 	}
-
+#endif
 	return 0;
 }
 
