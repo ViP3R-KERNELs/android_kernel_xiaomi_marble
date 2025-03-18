@@ -118,11 +118,13 @@
 #define QDSP6SS_BOOT_CMD                0x404
 #define BOOT_FSM_TIMEOUT                10000
 
-struct reg_info {
+/*
+static struct reg_info {
 	struct regulator *reg;
 	int uV;
 	int uA;
 };
+*/
 
 struct qcom_mss_reg_res {
 	const char *supply;
@@ -816,7 +818,7 @@ static int q6v5_mpss_init_image(struct q6v5 *qproc, const struct firmware *fw)
 	void *ptr;
 	int ret;
 
-	metadata = qcom_mdt_read_metadata(qproc->dev, fw, qproc->hexagon_mdt_image, &size, NULL);
+	metadata = qcom_mdt_read_metadata(qproc->dev, fw, qproc->hexagon_mdt_image, &size, 0, NULL);
 	if (IS_ERR(metadata))
 		return PTR_ERR(metadata);
 
